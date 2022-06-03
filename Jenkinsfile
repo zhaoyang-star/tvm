@@ -45,7 +45,7 @@
 // 'python3 jenkins/generate.py'
 // Note: This timestamp is here to ensure that updates to the Jenkinsfile are
 // always rebased on main before merging:
-// Generated at 2022-05-25T11:48:25.852378
+// Generated at 2022-06-02T17:50:57.026988
 
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
 // NOTE: these lines are scanned by docker/dev_common.sh. Please update the regex as needed. -->
@@ -163,23 +163,6 @@ def init_git() {
       done
     ''',
     label: 'Update git submodules',
-  )
-}
-
-def docker_init(image) {
-  // Clear out all Docker images that aren't going to be used
-  sh(
-    script: """
-    set -eux
-    docker image ls --all
-    IMAGES=\$(docker image ls --all --format '{{.Repository}}:{{.Tag}}  {{.ID}}')
-
-    echo -e "Found images:\\n\$IMAGES"
-    echo "\$IMAGES" | { grep -vE '${image}' || test \$? = 1; } | { xargs docker rmi || test \$? = 123; }
-
-    docker image ls --all
-    """,
-    label: 'Clean old Docker images',
   )
 }
 
@@ -480,6 +463,19 @@ def ecr_pull(full_name) {
 }
 
 def docker_init(image) {
+  sh(
+    script: """
+    set -eux
+    docker image ls --all
+    IMAGES=\$(docker image ls --all --format '{{.Repository}}:{{.Tag}}  {{.ID}}')
+
+    echo -e "Found images:\\n\$IMAGES"
+    echo "\$IMAGES" | { grep -vE '${image}' || test \$? = 1; } | { xargs docker rmi || test \$? = 123; }
+
+    docker image ls --all
+    """,
+    label: 'Clean old Docker images',
+  )
   if (image.contains("amazonaws.com")) {
     // If this string is in the image name it's from ECR and needs to be pulled
     // with the right credentials

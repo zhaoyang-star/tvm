@@ -54,23 +54,6 @@ def init_git() {
   )
 }
 
-def docker_init(image) {
-  // Clear out all Docker images that aren't going to be used
-  sh(
-    script: """
-    set -eux
-    docker image ls --all
-    IMAGES=\$(docker image ls --all --format {% raw %}'{{.Repository}}:{{.Tag}}  {{.ID}}'{% endraw %})
-
-    echo -e "Found images:\\n\$IMAGES"
-    echo "\$IMAGES" | { grep -vE '${image}' || test \$? = 1; } | { xargs docker rmi || test \$? = 123; }
-
-    docker image ls --all
-    """,
-    label: 'Clean old Docker images',
-  )
-}
-
 def should_skip_slow_tests(pr_number) {
   withCredentials([string(
     credentialsId: 'tvm-bot-jenkins-reader',
