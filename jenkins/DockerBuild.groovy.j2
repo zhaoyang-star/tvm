@@ -194,32 +194,6 @@ def ecr_pull(full_name) {
   }
 }
 
-def docker_init(image) {
-  sh(
-    script: """
-    set -eux
-    docker image ls --all
-    IMAGES=\$(docker image ls --all --format {% raw %}'{{.Repository}}:{{.Tag}}  {{.ID}}'{% endraw %})
-
-    echo -e "Found images:\\n\$IMAGES"
-    echo "\$IMAGES" | { grep -vE '${image}' || test \$? = 1; } | { xargs docker rmi || test \$? = 123; }
-
-    docker image ls --all
-    """,
-    label: 'Clean old Docker images',
-  )
-  if (image.contains("amazonaws.com")) {
-    // If this string is in the image name it's from ECR and needs to be pulled
-    // with the right credentials
-    ecr_pull(image)
-  } else {
-    sh(
-      script: "docker pull ${image}",
-      label: 'Pull docker image',
-    )
-  }
-}
-
 // Run make. First try to do an incremental make from a previous workspace in hope to
 // accelerate the compilation. If something is wrong, clean the workspace and then
 // build from scratch.
