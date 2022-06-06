@@ -29,5 +29,6 @@ cd /
 git clone https://bitbucket.org/icl/papi.git
 cd papi/src
 export PAPI_CUDA_ROOT=/usr/local/cuda
+export PAPI_ROCM_ROOT=/opt/rocm-4.3.0
 ./configure --with-components="$1"
 make -j $(nproc) && make install
