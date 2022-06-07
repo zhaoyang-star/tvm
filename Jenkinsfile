@@ -45,7 +45,7 @@
 // 'python3 jenkins/generate.py'
 // Note: This timestamp is here to ensure that updates to the Jenkinsfile are
 // always rebased on main before merging:
-// Generated at 2022-06-06T17:45:41.380059
+// Generated at 2022-06-06T18:03:14.896384
 
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
 // NOTE: these lines are scanned by docker/dev_common.sh. Please update the regex as needed. -->
@@ -180,6 +180,7 @@ def docker_init(image) {
     """,
     label: 'Clean old Docker images',
   )
+  ecr_pull(image)
 }
 
 def should_skip_slow_tests(pr_number) {
