@@ -68,7 +68,6 @@ def docker_init(image) {
     """,
     label: 'Clean old Docker images',
   )
-  ecr_pull(image)
 }
 
 def should_skip_slow_tests(pr_number) {
